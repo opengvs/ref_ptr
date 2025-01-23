@@ -12,7 +12,7 @@ endif()
 project ("TestRef_Ptr")
 
 # 将源代码添加到此项目的可执行文件。
-add_executable (TestRef_Ptr "TestRef_Ptr.cpp" "TestRef_Ptr.h" "ref_ptr.hpp" "Referenced.hpp")
+add_executable (TestRef_Ptr "TestRef_Ptr.cpp" "TestRef_Ptr.h" "../ref_ptr.hpp" "../Referenced.hpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET TestRef_Ptr PROPERTY CXX_STANDARD 20)
