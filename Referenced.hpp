@@ -70,11 +70,11 @@ namespace osg {
             }
 
             if (this->_refCount > 0)
-                  this->unref();
+                this->unref();
             //_refMutex = std::move_if_noexcept(_Ref._refMutex);
             setRefCount(_Ref._refCount); //_refCount = _Ref._refCount;
             _observerSet = std::move_if_noexcept(_Ref._observerSet);
-            
+
             //_Ref._refMutex = nullptr;
 #ifndef _USE_ATIMIC_REFCOUNT_
             _Ref._refCount = 0;
@@ -102,8 +102,8 @@ namespace osg {
             return *this;
         }
 
-         /** Increment the reference count by one, indicating that
-            this object has another pointer which is referencing it.*/
+        /** Increment the reference count by one, indicating that
+           this object has another pointer which is referencing it.*/
         inline int ref() const;
 
         /** Decrement the reference count by one, indicating that
@@ -141,18 +141,18 @@ namespace osg {
         void removeObserver(Observer* observer) const;
 
     public:
-       // friend class  ObserverSet;
-       // friend void ObserverAtomicLock_Begin(const Referenced* _ref);
-       // friend void ObserverAtomicLock_End(const Referenced* _ref);
+        // friend class  ObserverSet;
+        // friend void ObserverAtomicLock_Begin(const Referenced* _ref);
+        // friend void ObserverAtomicLock_End(const Referenced* _ref);
     protected:
 
         virtual ~Referenced();
 
-      //  void signalObserversAndDelete(bool signalDelete, bool doDelete) const;
+        //  void signalObserversAndDelete(bool signalDelete, bool doDelete) const;
 
-        //如果没有定义采用原子操作实现的自旋锁，定义互斥锁
+          //如果没有定义采用原子操作实现的自旋锁，定义互斥锁
 
-       // atomic_flag  _refAtomicLock = ATOMIC_FLAG_INIT;       //初始化原子布尔类型
+         // atomic_flag  _refAtomicLock = ATOMIC_FLAG_INIT;       //初始化原子布尔类型
         mutable std::atomic_flag _refAtomicLock = ATOMIC_FLAG_INIT;
 #define  refAtomicLockLOCK_BEGIN    while (_refAtomicLock.test_and_set(std::memory_order_acquire)) ;
 #define  refAtomicLockLOCK_END    _refAtomicLock.clear(std::memory_order_release);
@@ -164,7 +164,7 @@ namespace osg {
 #endif
 
 
-      //  mutable void* _observerSet;
+        //  mutable void* _observerSet;
         mutable ObserverSet* _observerSet;
 
         void  setRefCount(unsigned long _count)
@@ -181,12 +181,12 @@ namespace osg {
     {
     public:
         Observer() {};
-       /* virtual*/ ~Observer() {};
+        /* virtual*/ ~Observer() {};
 
         /** objectDeleted is called when the observed object is about to be deleted.  The observer will be automatically
         * removed from the observed object's observer set so there is no need for the objectDeleted implementation
         * to call removeObserver() on the observed object. */
-       /* virtual*/ void objectDeleted(void*) {}
+        /* virtual*/ void objectDeleted(void*) {}
 
     };
 
@@ -196,9 +196,9 @@ namespace osg {
 
 
 
-    
+
     /** Class used by osg::Referenced to track the observers associated with it.*/
-    class  ObserverSet 
+    class  ObserverSet
     {
     public:
         /** Increment the reference count by one, indicating that
@@ -208,12 +208,12 @@ namespace osg {
 #ifndef _USE_ATIMIC_REFCOUNT_
             observerAtomicLockLOCK_BEGIN
 #endif
-            ++_refCount;
+                ++_refCount;
 
 #ifndef _USE_ATIMIC_REFCOUNT_
             observerAtomicLockLOCK_END
 #endif
-            return _refCount;
+                return _refCount;
         }
 
         inline int unref() const
@@ -224,22 +224,22 @@ namespace osg {
 
 
             observerAtomicLockLOCK_BEGIN
-         
 
-            --_refCount;
+
+                --_refCount;
             newRef = _refCount;
             needDelete = newRef == 0;
 
-           
+
             observerAtomicLockLOCK_END
-         
 
-            if (needDelete)
-            {
 
-                if (_refCount == 0)
-                    delete this;
-            }
+                if (needDelete)
+                {
+
+                    if (_refCount == 0)
+                        delete this;
+                }
 
 
             return newRef;
@@ -265,7 +265,7 @@ namespace osg {
 #ifndef _USE_ATIMIC_REFCOUNT_
         mutable unsigned long    _refCount = 0;
 #else
-        mutable    std::atomic<unsigned long>        _refCount=0; // 定义一个原子整数计数器
+        mutable    std::atomic<unsigned long>        _refCount = 0; // 定义一个原子整数计数器
 #endif
         void  setRefCount(unsigned long _count)
         {
@@ -280,7 +280,7 @@ namespace osg {
         ObserverSet() = delete;
         // ObserverSet() :osg::Referenced() {};
 
-        ObserverSet(const Referenced* observedObject) :_observedObject(const_cast<Referenced*>(observedObject)) 
+        ObserverSet(const Referenced* observedObject) :_observedObject(const_cast<Referenced*>(observedObject))
         {
             setRefCount(0);
         };
@@ -294,7 +294,7 @@ namespace osg {
           * returns null if object doesn't exist anymore. */
         Referenced* addRefLock();
 
-       // inline std::mutex* getObserverSetMutex() const { return &_ObserverMutex; }
+        // inline std::mutex* getObserverSetMutex() const { return &_ObserverMutex; }
 
         void addObserver(Observer* observer);
         void removeObserver(Observer* observer);
@@ -313,19 +313,19 @@ namespace osg {
 #pragma warning(suppress : 26495)  
 
         ObserverSet& operator = (const ObserverSet& rhs)
-        { 
-           // if (this == &rhs)
-           //     return *this;
-           // if (this->_refCount > 0)
-           //     this->unref();
-            //
-           // setRefCount(rhs._refCount);
-            
+        {
+            // if (this == &rhs)
+            //     return *this;
+            // if (this->_refCount > 0)
+            //     this->unref();
+             //
+            // setRefCount(rhs._refCount);
 
-            return *this; 
+
+            return *this;
         }
-        
-    
+
+
         /*virtual*/ ~ObserverSet()
         {
             _observedObject = nullptr;
@@ -334,7 +334,7 @@ namespace osg {
 
 
 
-        Referenced*                              _observedObject;
+        Referenced* _observedObject;
         std::set<Observer*>                       _observers;
 
     };
@@ -375,17 +375,17 @@ namespace osg {
         observerAtomicLockLOCK_BEGIN
 
 
-        int refCount = _observedObject->ref();
+            int refCount = _observedObject->ref();
         if (refCount == 1)
         {
             observerAtomicLockLOCK_END
-            // The object is in the process of being deleted, but our
-            // objectDeleted() method hasn't been run yet (and we're
-            // blocking it -- and the final destruction -- with our lock).
-            _observedObject->unref_nodelete();
-          
+                // The object is in the process of being deleted, but our
+                // objectDeleted() method hasn't been run yet (and we're
+                // blocking it -- and the final destruction -- with our lock).
+                _observedObject->unref_nodelete();
 
-                return nullptr;
+
+            return nullptr;
         }
 
 
@@ -395,29 +395,29 @@ namespace osg {
             return _observedObject;
     }
 
-    
+
     inline void ObserverSet::signalObjectDeleted(void* ptr)
     {
-       // const Referenced* _pRef = getObserverdObject();
+        // const Referenced* _pRef = getObserverdObject();
 
         observerAtomicLockLOCK_BEGIN
-       // ObserverAtomicLock_Begin(_pRef);
+            // ObserverAtomicLock_Begin(_pRef);
 
-        for (std::set<Observer*>::iterator itr = _observers.begin();
-                     itr != _observers.end(); ++itr)
+            for (std::set<Observer*>::iterator itr = _observers.begin();
+                itr != _observers.end(); ++itr)
         {
             (*itr)->objectDeleted(ptr);
         }
         _observers.clear();
-       
+
 
         // reset the observed object so that we know that it's now detached.
         _observedObject = nullptr;
 
         observerAtomicLockLOCK_END
-       // ObserverAtomicLock_End(_pRef);
+            // ObserverAtomicLock_End(_pRef);
     }
-    
+
 
     inline int Referenced::ref() const
     {
@@ -444,8 +444,8 @@ namespace osg {
             refAtomicLockLOCK_BEGIN
 
                 --_refCount;
-                newRef = _refCount;
-                needDelete = newRef == 0;
+            newRef = _refCount;
+            needDelete = newRef == 0;
 
             refAtomicLockLOCK_END
 
@@ -457,7 +457,7 @@ namespace osg {
                 _observerSet->signalObjectDeleted(const_cast<Referenced*>(this));
             }
             if (_refCount == 0)
-                    delete this;
+                delete this;
         }
 
         return newRef;
@@ -471,7 +471,7 @@ namespace osg {
              //OSG_WARN<<"         the final reference count was "<<_refCount<<", memory corruption possible."<<std::endl;
         }
 
-       if (_observerSet)
+        if (_observerSet)
         {
             _observerSet->signalObjectDeleted(const_cast<Referenced*>(this));
             _observerSet->unref();
@@ -505,7 +505,7 @@ namespace osg {
     {
         getOrCreateObserverSet()->removeObserver(observer);
     }
-  
+
     inline int Referenced::unref_nodelete() const
     {
         unsigned long tempRet = 0;
@@ -514,14 +514,14 @@ namespace osg {
         refAtomicLockLOCK_BEGIN
 #endif
             tempRet = --_refCount;
-             
+
 #ifndef _USE_ATIMIC_REFCOUNT_
         refAtomicLockLOCK_END
 #endif
 
             return  tempRet;
     }
-    
+
     // intrusive_ptr_add_ref and intrusive_ptr_release allow
     // use of osg Referenced classes with boost::intrusive_ptr
     inline void intrusive_ptr_add_ref(Referenced* p) { p->ref(); }
