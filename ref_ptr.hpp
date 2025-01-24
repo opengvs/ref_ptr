@@ -304,7 +304,29 @@ namespace osg {
             obj->unref_nodelete();
             return rptr.valid();
         }
+        ref_ptr<T> lock()
+        {
+            ref_ptr<T> refPtr;
+         
+            if (!_reference)
+            {
+              //  refPtr = nullptr;
+                return nullptr;
+            }
 
+            Referenced* obj = _reference->addRefLock();
+            if (!obj)
+            {
+               // refPtr = nullptr;
+                return nullptr;
+            }
+
+            refPtr = _ptr;
+            obj->unref_nodelete();
+            
+            return std::move(refPtr);
+        }
+ 
         /** Comparison operators. These continue to work even after the
          * observed object has been deleted.
          */
