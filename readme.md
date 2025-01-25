@@ -5,7 +5,7 @@
 
 ​         <font color="Red">ref_ptr智能指针</font>最初时十年前作者从[OSG(OpenSceneGraph)](https://github.com/openscenegraph/OpenSceneGraph) 中抠出来的，主要是替换std::auto_ptr，并且提供多线程安全的处理机制，经过几个项目应用，起到了较为满意的效果。几个月前接触到现代C++11、14、17、20提供的std::unique_ptr和std::share_ptr/std::weak_ptr，通过一篇《再次谈谈C++语言中的智能指针》文章分析了现在C++中智能指针的线程安全性，闲下来翻阅以前的代码，感觉从简洁性上自己开发的ref_ptr智能指针较为简单点，如果应用到项目中，出现问题可能更好调试。基于此作者对ref_ptr智能指针源代码做了再次修改，主要体现在将std::mutex互斥量同步方式，改为基于std::atomic_flag原子类型的自旋锁SpinLock同步和std::atomic原子计数器实现线程安全。
 
-​       <font color="Red">ref_ptr智能指针</font>仅仅包含两个头文件[ref_ptr.hpp](../cppCode/ref_ptr.hpp)和[References.hpp](../cppCode/References.hpp)。不依赖任何第三方库，仅仅需要C++11标准支撑就可以了。为了感谢OSG系统的辛勤付出，作者将<font color="Red">ref_ptr智能指针</font>命名空间保留为osg::ref_ptr。使用中仅仅包含#include<ref_ptr.hpp>就可以了。下面详细介绍一下ref_ptr智能指针的程序结构及使用方法。
+​       <font color="Red">ref_ptr智能指针</font>仅仅包含两个头文件[ref_ptr.hpp](../cppCode/ref_ptr.hpp)和[References.hpp](../cppCode/References.hpp)。不依赖任何第三方库，仅仅需要C++11标准支撑就可以了。为了感谢OSG系统的辛勤付出，作者将<font color="Red">ref_ptr智能指针</font>命名空间保留为osg::ref_ptr。使用中仅仅包含#include<ref_ptr.hpp>就可以了。下面详细介绍一下ref_ptr智能指针的程序结构及使用方法 。
 
 ​      作者重新设计了ref_ptr智能指针的类结构，其类层次结构如下：
 
