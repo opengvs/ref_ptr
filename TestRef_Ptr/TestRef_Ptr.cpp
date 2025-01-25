@@ -2,7 +2,7 @@
 //
 
 #include "TestRef_Ptr.h"
-#include "ref_ptr.hpp"
+#include "../ref_ptr.hpp"
 #include <string>
 #include <list>
 #include <vector>
@@ -47,6 +47,7 @@ public:
     void AddChild(osg::ref_ptr<Person>& child)
     {
         osg::observer_ptr<Person> child_ptr = child;
+        m_Childen.emplace_back(child_ptr);
     }
 };
 std::list<osg::ref_ptr<Person>>  g_PersonList;
@@ -67,11 +68,13 @@ int main()
 
     osg::ref_ptr<Person>  brother = new Person();
     brother->SetName("张三弟弟");
-    
+    brother->m_Father = farther;
+    brother->m_Mather = mather;
 
     osg::ref_ptr<Person>  brother1 = new Person();
     brother1->SetName("张三妹妹");
-   
+    brother1->m_Father = farther;
+    brother1->m_Mather = mather;
 
     person->m_Father = farther;
     person->m_Mather = mather;
@@ -95,6 +98,29 @@ int main()
     while(pIt != g_PersonList.end() )
     {
         cout << (*pIt)->Name << endl;
+        osg::ref_ptr<Person> Ref_Person = *pIt;
+        if (Ref_Person->m_Father != nullptr)
+        {
+            cout << "父亲为:"<< Ref_Person->m_Father->Name << endl;
+        }
+        if (Ref_Person->m_Mather != nullptr)
+        {
+            cout << "父亲为:" << Ref_Person->m_Mather->Name << endl;
+        }
+        auto  pIt1 = Ref_Person->m_Childen.begin();
+        while (pIt1 != Ref_Person->m_Childen.end())
+        {
+            osg::observer_ptr<Person> ObserverPerson_Ptr = *pIt1;
+
+            osg::ref_ptr< Person >  tempChild = ObserverPerson_Ptr.lock();
+            //if (ObserverPerson_Ptr.lock(tempChild) == true)
+            if(tempChild != nullptr)
+            {
+                cout << "还有一个子女为:" << tempChild->Name << endl;
+            }
+            pIt1++;
+        }
+        cout << "-------------------" << endl;
         pIt++;
     }
 
