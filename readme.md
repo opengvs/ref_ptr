@@ -1,7 +1,7 @@
 <h1 align="Center"><font color=#ee7707;>开源一个线程安全的智能指针</font></h1>
 <h2 align="Center"><font face="华文行楷" color="Blue">开发者：刘文庆</font></h2>
 
-​          本程序开源地址：https://github.com/opengvs/ref_ptr   和 https://gitee.com/opengvs/ref_ptr
+​          本程序开源地址 ：https://github.com/opengvs/ref_ptr   和 https://gitee.com/opengvs/ref_ptr
 
 ​         <font color="Red">ref_ptr智能指针</font>最初时十年前作者从[OSG(OpenSceneGraph)](https://github.com/openscenegraph/OpenSceneGraph) 中抠出来的，主要是替换std::auto_ptr，并且提供多线程安全的处理机制，经过几个项目应用，起到了较为满意的效果。几个月前接触到现代C++11、14、17、20提供的std::unique_ptr和std::share_ptr/std::weak_ptr，通过一篇《再次谈谈C++语言中的智能指针》文章分析了现在C++中智能指针的线程安全性，闲下来翻阅以前的代码，感觉从简洁性上自己开发的ref_ptr智能指针较为简单点，如果应用到项目中，出现问题可能更好调试。基于此作者对ref_ptr智能指针源代码做了再次修改，主要体现在将std::mutex互斥量同步方式，改为基于std::atomic_flag原子类型的自旋锁SpinLock同步和std::atomic原子计数器实现线程安全。
 
